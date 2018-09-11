@@ -22,6 +22,8 @@ cc.Class({
         gemLabel: cc.Label,
         bestLabel: cc.Label,
         gemPrefab: cc.Prefab,
+        bonusPrefab: cc.Prefab,
+        manSheet: cc.Node,
 
     },
 
@@ -66,6 +68,10 @@ cc.Class({
                 self.firstPlat.getComponent(cc.Animation).play("fade_down");
                 
             }
+            if(self.comboNum > 1) self.manSheet.runAction(cc.sequence(
+                cc.moveBy(0.3, 450, 0),
+                cc.callFunc(function() { self.manSheet.setPosition(cc.v2(-460, 150))})
+            ));
         })
     },
 
@@ -105,6 +111,12 @@ cc.Class({
             cc.delayTime(0.6),
             cc.callFunc(this.afterMove, this)
         ));  
+        if(this.comboNum > 1) {
+            this.manSheet.runAction(cc.sequence(
+                cc.delayTime(0.3),
+                cc.moveBy(0.3, 460 , -150).easing(cc.easeInOut(2.0))
+            ));
+        }
     },
     moveDown() {
         this.secondPlat.runAction(cc.moveBy(0.6, 0, -540));
@@ -140,7 +152,6 @@ cc.Class({
         this.newPlat = platform;
         // gem generate section
         if(this.comboNum > 2) {
-            let firstPos = 45;
             for (var i = 0; i < 3; i++) {
                 var gem = cc.instantiate(this.gemPrefab);
                 gem.setPosition(cc.v2(0, 45 + 80 * i));
@@ -204,11 +215,19 @@ cc.Class({
         successText.getComponent(cc.Label).string = this.highScoreArray[ran6] + ", +" + this.comboNum;
         successText.parent = this.uilayer;
         successText.runAction(cc.sequence(
-            cc.delayTime(1),
+            cc.delayTime(1.5),
             cc.removeSelf(true)
         ));
         this.score += this.comboNum;
         this.showScore();
+        if(this.comboNum > 2) {
+            var bonuslbl = cc.instantiate(this.bonusPrefab);
+            bonuslbl.parent = this.uilayer;
+            bonuslbl.runAction(cc.sequence(
+                cc.delayTime(1.5),
+                cc.removeSelf(true)
+            ));
+        }
     },
     showScore() {
         this.scoreLabel.string = this.score;

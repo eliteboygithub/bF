@@ -12,7 +12,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "success_label",
+    "_name": "bonus_label",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -29,15 +29,15 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 255,
+      "g": 255,
+      "b": 51,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 83.19,
-      "height": 40
+      "width": 406.59,
+      "height": 50
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -46,8 +46,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 110,
-      "y": 297,
+      "x": 0,
+      "y": 346,
       "z": 0
     },
     "_scale": {
@@ -82,10 +82,10 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Label",
-    "_N$string": "Label",
-    "_fontSize": 34,
-    "_lineHeight": 40,
+    "_string": "Bonus Level, Enjoy!",
+    "_N$string": "Bonus Level, Enjoy!",
+    "_fontSize": 46,
+    "_lineHeight": 50,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -94,7 +94,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
-    "_id": "2cRUShCdZDiJP2TQsBS6QH"
+    "_id": "dfHHD40P9AeI/2njLRD+XW"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -102,9 +102,9 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "d7040142-67c5-4d61-80bb-6147849f5617"
+      "__uuid__": "a68f7faa-5c0a-4e3b-802b-8710737042e7"
     },
-    "fileId": "66q245nn5Iioo79eSw+vf0",
+    "fileId": "97+euO1YZOV4/Gdy6Vum4M",
     "sync": false
   }
 ]
