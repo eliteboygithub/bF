@@ -42,7 +42,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 340,
+      "width": 279,
       "height": 16
     },
     "_anchorPoint": {
@@ -103,7 +103,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": null,
-    "_id": "650bnABzpHXKUFsFGuHe+N"
+    "_id": "caDSVL85ZNFpL1rp3Gl/zR"
   },
   {
     "__type__": "cc.Animation",
@@ -134,7 +134,7 @@
       }
     ],
     "playOnLoad": false,
-    "_id": "aenFtg9oZG3pUrluKzeyk6"
+    "_id": "a6fsfhKwpDQpJKoyae0dgT"
   },
   {
     "__type__": "b64aaB+AgZAXbdH9S6zNAiD",
@@ -144,7 +144,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "_id": "d7VUj0WRZG8rzR2K/WY2cP"
+    "_id": "10N1OY3WRAL4pDLPv+R8tZ"
   },
   {
     "__type__": "cc.PrefabInfo",

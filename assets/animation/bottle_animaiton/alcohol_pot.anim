@@ -1,9 +1,73 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "",
+  "_name": "alcohol_pot",
   "_objFlags": 0,
-  "_duration": 0,
+  "_native": "",
+  "_duration": 0.55,
   "sample": 60,
-  "curveData": {},
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "86dc49f2-9a04-46c6-abc3-7a5e58d5e234"
+            }
+          },
+          {
+            "frame": 0.06666666666666667,
+            "value": {
+              "__uuid__": "001dcb77-895f-43e3-b008-e8cae1daa460"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "ed82b06b-1291-408e-9e62-ac68d7e1a2b7"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "2f29153f-c7da-4075-a8dc-16fec6586e6d"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "c3a2c61f-086a-4b85-be3b-0a7c0c7b779b"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "904388a3-3d75-49ff-97de-4bfda40c93e7"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "d42f8368-baed-4a83-a303-3985c6a5beec"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "06427372-6e89-4627-ae11-408e8b6f3c83"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "86dc49f2-9a04-46c6-abc3-7a5e58d5e234"
+            }
+          }
+        ]
+      }
+    }
+  },
   "events": []
 }

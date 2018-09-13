@@ -1,9 +1,73 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "",
+  "_name": "aircon",
   "_objFlags": 0,
-  "_duration": 0,
+  "_native": "",
+  "_duration": 0.55,
   "sample": 60,
-  "curveData": {},
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "48f29997-2af3-4c10-bac9-1275a37a59eb"
+            }
+          },
+          {
+            "frame": 0.06666666666666667,
+            "value": {
+              "__uuid__": "bec7a18b-f104-46be-b6ab-903a356d8573"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "124024bd-2fc8-473d-bdaf-7a062f2f7f8b"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "2b5807e4-f869-4cf5-b7c9-d57a18a9b4cf"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "6b27c03a-7850-4f86-854c-f12357fab57b"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "e2eeba3b-d1ae-4ba7-a226-2437763f61e1"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "893199dd-19b3-49d1-9bca-e42b2e52acb0"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "fb9e9c6f-6ec9-46ce-ac0a-6cc2b2b799e4"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "48f29997-2af3-4c10-bac9-1275a37a59eb"
+            }
+          }
+        ]
+      }
+    }
+  },
   "events": []
 }

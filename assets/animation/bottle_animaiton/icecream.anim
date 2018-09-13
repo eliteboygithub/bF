@@ -1,9 +1,73 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "",
+  "_name": "icecream",
   "_objFlags": 0,
-  "_duration": 0,
+  "_native": "",
+  "_duration": 0.55,
   "sample": 60,
-  "curveData": {},
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "c842f559-ce93-4257-b80f-9734d7d6bdb9"
+            }
+          },
+          {
+            "frame": 0.06666666666666667,
+            "value": {
+              "__uuid__": "2360fb2a-f75d-4728-bc75-dfa9a22931c4"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "ead03a26-d660-4c17-97dc-c05f07805c9a"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "3b4f9b38-cc0e-438c-b911-9718fc6b6737"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "63667eeb-b1df-417d-9093-31707d09f564"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "5dc62b1f-f1d1-4b7b-a9e4-a8f5bbcb2d3a"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "967088d0-7bb3-4961-a858-be0a602c44e5"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "7b42adbc-1eab-4abb-a69b-c9c7c0ba2671"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "c842f559-ce93-4257-b80f-9734d7d6bdb9"
+            }
+          }
+        ]
+      }
+    }
+  },
   "events": []
 }

@@ -1,9 +1,73 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "",
+  "_name": "needle&syringe",
   "_objFlags": 0,
-  "_duration": 0,
+  "_native": "",
+  "_duration": 0.55,
   "sample": 60,
-  "curveData": {},
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "a07240e3-257e-43ed-97b3-7d44ae34674e"
+            }
+          },
+          {
+            "frame": 0.06666666666666667,
+            "value": {
+              "__uuid__": "dfcf60d6-e32d-4bb8-8a6c-9914504f2c52"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "c8106b67-4e12-4103-935e-3912808a15f9"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "460ab204-3ca9-488b-bc22-b0293102f922"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "b63415f5-187e-4ce4-8ce5-7debbe0136be"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "2615b955-5826-423c-95b4-684aafbd43f5"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "1aca4538-7062-4953-9ba5-ca59d9758c51"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "5ae5bc3b-f511-4551-97c2-b408c013a92e"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "a07240e3-257e-43ed-97b3-7d44ae34674e"
+            }
+          }
+        ]
+      }
+    }
+  },
   "events": []
 }

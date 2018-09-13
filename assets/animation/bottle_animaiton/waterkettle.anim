@@ -1,9 +1,73 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "",
+  "_name": "waterkettle",
   "_objFlags": 0,
-  "_duration": 0,
+  "_native": "",
+  "_duration": 0.55,
   "sample": 60,
-  "curveData": {},
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "acafc9d5-8422-4027-9f4d-a030ec1f14c1"
+            }
+          },
+          {
+            "frame": 0.06666666666666667,
+            "value": {
+              "__uuid__": "3c49610d-ac2b-4e32-a7b4-54b96e27b708"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "6a6f5b5c-103b-47ce-b9b3-ade7809bec8a"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "881d4aa5-2bfd-4e34-96e9-a73022c425ec"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "40df3217-44a5-49e3-8586-ce6fee682c00"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "aa130cd0-852a-47e3-bcbb-ffb390152681"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "33e8fb9c-5716-4292-8b0d-7ace44eff09b"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "2d921a68-dfb1-4a79-8102-7195d26f7e2c"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "acafc9d5-8422-4027-9f4d-a030ec1f14c1"
+            }
+          }
+        ]
+      }
+    }
+  },
   "events": []
 }

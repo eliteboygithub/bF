@@ -1,9 +1,73 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "",
+  "_name": "guitar",
   "_objFlags": 0,
-  "_duration": 0,
+  "_native": "",
+  "_duration": 0.55,
   "sample": 60,
-  "curveData": {},
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "ffb2e721-faed-4658-ac8b-30a0e1eecbb4"
+            }
+          },
+          {
+            "frame": 0.06666666666666667,
+            "value": {
+              "__uuid__": "27129e75-4dfa-4f55-adf5-1fee327b0f4d"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "989ec243-7106-4271-8906-a98f0aeb287c"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "ea7512d6-2ebe-4c43-93c1-3acb605565bc"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "242534b8-4ee4-46bd-867d-9f616ca6a3b0"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "ed84fd50-2379-4861-92df-9366e537962d"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "180b638e-8312-4d42-8d9c-be2aac88a390"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "aa2581a2-ac27-4b63-8ed5-109d2dd6c669"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "ffb2e721-faed-4658-ac8b-30a0e1eecbb4"
+            }
+          }
+        ]
+      }
+    }
+  },
   "events": []
 }

@@ -1,9 +1,73 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "",
+  "_name": "toyman",
   "_objFlags": 0,
-  "_duration": 0,
+  "_native": "",
+  "_duration": 0.55,
   "sample": 60,
-  "curveData": {},
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "6b2702fa-508f-4557-991e-7c126d084d35"
+            }
+          },
+          {
+            "frame": 0.06666666666666667,
+            "value": {
+              "__uuid__": "973f5cc1-d33d-4121-be50-35e59414bbe6"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "b17bc514-9229-4eec-85b5-56acf4c90f62"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "f3cd9262-3ed8-42b0-9e2a-37d9f5489881"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "1ce9dd54-cd21-4718-89a0-b803eab12393"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "96cf0893-4534-4b2c-b702-32067cbc5426"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "d8e63356-e852-4a87-9f95-54543166120d"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "ecb57d06-10ae-40d4-a766-22baf9a7f192"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "6b2702fa-508f-4557-991e-7c126d084d35"
+            }
+          }
+        ]
+      }
+    }
+  },
   "events": []
 }
