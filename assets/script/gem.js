@@ -27,6 +27,7 @@ cc.Class({
         this.node.destroy();
         this.mainNode.gemNum += 1;
         this.mainNode.showScore();
+        this.mainNode.checkShopState();
     }
 
 });

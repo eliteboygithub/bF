@@ -46,6 +46,18 @@ cc.Class({
         rightArrow: cc.Node,
         sbuyBtn: cc.Node,
         splayBtn: cc.Node,
+        guide: cc.Node,
+        gem_panel: cc.Node,
+        timer_label: cc.Label,
+        giftIcon: cc.Node,
+        giftSFrame: {
+            default:[],
+            type: cc.SpriteFrame
+        },
+        coinPrefab: cc.Prefab,
+        gameOver: cc.Node,
+        continueGraphics: cc.Graphics,
+
 
     },
 
@@ -70,13 +82,11 @@ cc.Class({
 
         });
         self.node.on("touchend", function(event) {
-
+            console.log(self.isAction);
             var touches = event.getTouches();
             var offX = self.firstLoc.x - touches[0].getLocation().x;
             var offY = self.firstLoc.y - touches[0].getLocation().y;
             if(offY < -80 && self.isAction == false) {
-                if(offX > 120) offX = 120;
-                else if(offX < -120) offX = -120;
                 var moveUp = cc.moveBy(0.6,0,540);
                 var jump = cc.jumpBy(0.7, cc.v2(0, 0), 180, 1);
                 self.bottle.runAction(cc.sequence(
@@ -91,22 +101,27 @@ cc.Class({
                 self.bottle.runAction(cc.moveBy(0.3, offX * -2, 0));
                 self.bottle.getComponent(cc.Animation).play();
                 self.firstPlat.getComponent(cc.Animation).play("fade_down");
-                if(self.comboNum > 1) self.manSheet.runAction(cc.sequence(
-                    cc.moveBy(0.3, 450, 0),
-                    cc.callFunc(function() { self.manSheet.setPosition(cc.v2(-460, 150))})
-                ));
+                if(self.manMove) {
+                    self.manSheet.runAction(cc.sequence(
+                        cc.moveBy(0.3, 450, 0),
+                        cc.callFunc(function() { self.manSheet.setPosition(cc.v2(-460, 150))})
+                    ));
+                    self.manMove = false;
+                }
+                if(!self.startGame) self.guide.active = false;
             }
-            
             
         });
         self.menuShop.on("touchend", function() {
             self.shop.active = true;
             self.menu.active = false;
             self.menuOn = false;
+            self.skinNum = self.curSkin;
+            self.showShopData();
             if(self.skinNum == 0) {
                 self.leftArrow.active = false;
                 self.shop.children[2].active = true;
-            } 
+            }
         });
         self.shopClose.on("touchend", function() {
             self.shop.active = false;
@@ -138,41 +153,79 @@ cc.Class({
             self.showShopData();
         });
         self.sbuyBtn.on("touchend", function() {
-            
+            self.buySkin();
         });
         self.splayBtn.on("touchend", function() {
-
+            self.shopSkinPlay();
         });
-        
-
+        self.gem_panel.on("touchend", function() {
+            self.shop.active = true;
+            self.menu.active = false;
+            self.menuOn = false;
+            self.skinNum = self.curSkin;
+            if(self.skinNum == 0) {
+                self.leftArrow.active = false;
+                self.shop.children[2].active = true;
+            }
+        });
+        self.giftIcon.on("touchend", function() {
+            if(self.isTimer) return;
+            var coin = cc.instantiate(self.coinPrefab);
+            coin.parent = self.uilayer;
+            coin.runAction(cc.sequence(
+                cc.moveBy(0.6, 0, 900),
+                cc.callFunc(self.giftProcess, self),
+                cc.removeSelf(true)
+            ));
+        });
+        self.gameOver.children[4].on("touchend", function() {
+            self.continueGame();
+        });
     },
 
     start () {
+        this.firstPlat = this.startFirst;
+        this.secondPlat = this.startSecond;
+        this.skinNum = 0;
+        this.curSkin = 0;
         this.init();
         this.node.children[2].runAction(cc.repeatForever(cc.sequence(
             cc.delayTime(5),
             cc.fadeIn(7.0),
             cc.fadeOut(7.0)                        
         )));
+        this.skinSet();
+        
     },
 
-    // update (dt) {},
+    update (dt) {
+        if(this.drawIt) this.updateDraw(dt);
+        this.delta += dt;
+        if(this.delta < 1) return;
+        this.runTimer();        
+        this.delta = 0;
+    },
     init() {
+        this.startGame = false;
         this.score = 0;
         this.topScore = 0;
-        this.gemNum = 1000;
+        this.gemNum = 0;
         this.isMoving = false;
         this.isAction = false;
-        this.menuOn = false;
-        this.firstPlat = this.startFirst;
-        this.secondPlat = this.startSecond;
+        this.menuOn = false;        
         this.bottle = this.startBottle; 
         this.isEnd = false;
         this.comboNum = 1;
-        this.musicOn = true;
-        this.skinNum = 0;
-        this.showScore();
+        this.musicOn = true;        
+        this.shopChecked = false;
+        this.curSkin = 0;
         this.skins = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        this.dueTime = new Date().getTime() + (1000 * 60 * 5);
+        this.isTimer = true;
+        this.getData();
+        this.showScore();
+        this.manMove = false;
+        this.musicOn = true;
         
     },
     moveAll() {
@@ -184,6 +237,7 @@ cc.Class({
             cc.callFunc(this.afterMove, this)
         ));  
         if(this.comboNum > 1) {
+            this.manMove = true;
             this.manSheet.runAction(cc.sequence(
                 cc.delayTime(0.3),
                 cc.moveBy(0.3, 460 , -150).easing(cc.easeInOut(2.0))
@@ -251,14 +305,18 @@ cc.Class({
                     this.bottle.x = this.bottle.x + diff;
                     this.bottle.runAction(cc.sequence(
                         cc.rotateBy(0.8, -80),
-                        cc.spawn(cc.rotateBy(1.2, -180), cc.moveBy(1.2, -200 , -1000))
+                        cc.spawn(cc.rotateBy(1.2, -180), cc.moveBy(1.2, -200 , -1000)),
+                        cc.callFunc(this.endGame, this)
                     ));
                 } else {
                     this.bottle.anchorX = 0.5 - diff/this.bottle.width;
                     this.bottle.x = this.bottle.x - diff;
                     this.bottle.runAction(cc.sequence(
                         cc.rotateBy(0.8, 80),
-                        cc.spawn(cc.rotateBy(1.2, 180), cc.moveBy(1.2, 200 , -1000).easing(cc.easeIn(2.0)))
+                        cc.spawn(cc.rotateBy(1.2, 180), cc.moveBy(1.2, 200 , -1000).easing(cc.easeIn(2.0))),
+                        cc.delayTime(1.5),
+                        cc.callFunc(this.endGame, this)
+
                     ));
                 }
             }else{
@@ -278,6 +336,7 @@ cc.Class({
         ));
         this.comboNum = 1;
         this.score +=1;
+        if(this.score > this.topScore) this.topScore = this.score;
         this.showScore();
     },
     combo() {
@@ -291,19 +350,22 @@ cc.Class({
             cc.removeSelf(true)
         ));
         this.score += this.comboNum;
+        if(this.score > this.topScore) this.topScore = this.score;
         this.showScore();
         if(this.comboNum > 2) {
             var bonuslbl = cc.instantiate(this.bonusPrefab);
             bonuslbl.parent = this.uilayer;
             bonuslbl.runAction(cc.sequence(
-                cc.delayTime(1.5),
+                cc.delayTime(2),
                 cc.removeSelf(true)
             ));
         }
+        
     },
     showScore() {
         this.scoreLabel.string = this.score;
         this.gemLabel.string = this.gemNum;
+        this.bestLabel.string = "Best:" + this.topScore;
     },
     showShopData() {
         this.shopItem.spriteFrame = this.bottleSprite[this.skinNum];
@@ -311,24 +373,45 @@ cc.Class({
             this.shop.children[8].active = false;
             this.splayBtn.active = true;
             this.sbuyBtn.active = false;
+            this.shop.children[10].active = false;
         }else {
             this.shop.children[8].active = true;
             this.shop.children[8].children[0].getComponent(cc.Label).string = prices[this.skinNum];
-            if(prices[this.skinNum] < this.gemNum) {
+            if(prices[this.skinNum] > this.gemNum) {
                 this.splayBtn.active = false;
                 this.sbuyBtn.active = false;
+                this.shop.children[10].active = true;
             }else{
                 this.splayBtn.active = false;
                 this.sbuyBtn.active = true;
-            }
-            
+                this.shop.children[10].active = false;
+            }            
         }
     },
-    endGame() {
-        console.log("end game");
+    buySkin() {
+        this.skins[this.skinNum] = 1;
+        this.gemNum -= prices[this.skinNum];
+        this.splayBtn.active = true;
+        this.sbuyBtn.active = false;
+        this.shop.children[8].active = false;
+        this.showScore();
     },
-    shopSkin() {
-
+    endGame() {
+        this.saveData();
+        this.gameOver.active = true;
+        this.gameOver.children[0].getComponent(cc.Label).string = this.score;
+        this.gameOver.children[2].getComponent(cc.Sprite).spriteFrame = this.bottleSprite[this.skinNum];
+        this.updateShape();
+    },
+    shopSkinPlay() {
+        this.curSkin = this.skinNum;
+        var orgPos = this.bottle.getPosition();
+        this.bottle.destroy();
+        var newBottle = cc.instantiate(this.bottlePrefab[this.skinNum]);
+        newBottle.setPosition(orgPos);
+        newBottle.parent = this.bottleLayer;
+        this.shop.active = false;
+        this.bottle = newBottle;
     },
     toggleMusic() {
         if(this.musicOn) {
@@ -339,5 +422,154 @@ cc.Class({
             this.menuMusic.children[1].active = false;
         }
     },
+    checkShopState() {
+        console.log(this.shopChecked);
+        if(this.shopChecked) return;
+        var lowestPrice = 0;
+        for( var i = 0; i < 30; i++) {
+            if(this.skins[i] == 0) {
+                lowestPrice = prices[i];
+                this.shopChecked = true;
+                break;
+            }
+        }
+        if(lowestPrice < this.gemNum) {
+            var available = this.uilayer.children[8];
+            available.active = true;
+            available.runAction(cc.sequence(
+                cc.delayTime(1),
+                cc.fadeOut(3),
+                cc.callFunc(function() {
+                    available.active = false;
+                }),
+                cc.callFunc(this.returnCheckState, this)
+            ));
+            var seq = cc.repeat(
+                cc.sequence(
+                    cc.moveBy(0.5, 0, 10),
+                    cc.moveBy(0.5, 0, -10)
+                ), 3);
+            this.gem_panel.children[2].runAction(seq);
+        }
+    },
+    returnCheckState() {
+        this.uilayer.children[8].opacity = 255;
+        this.shopChecked = false;
+    },
+    runTimer() {
+        if(this.isTimer === false) return;
+        var now = new Date().getTime();
+        var distance = this.dueTime - now;
+        if(distance < 0) {
+            this.isTimer = false;
+            this.giftIcon.getComponent(cc.Animation).play();
+            this.timer_label.string = "Gift";
+            return;
+        }
+        var minutes = Math.floor(distance % (1000 * 60 * 60) / (1000 * 60) );
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        this.timer_label.string = this.pad(minutes) + ":" + this.pad(seconds);
+    },
+
+    pad(d) {
+        return (d < 10) ? '0' + d.toString() : d.toString();
+    },
+    giftProcess() {
+        var gifts = [50, 100, 150, 200]
+        var ran4 = Math.floor(Math.random() * gifts.length);
+        var ranGem = gifts[ran4];
+        this.gemNum += ranGem;
+        this.showScore();
+        this.resetTimer();
+        this.checkShopState();
+    },
+    resetTimer() {
+        this.giftIcon.getComponent(cc.Animation).stop();
+        this.dueTime = new Date().getTime() + (1000 * 60 * 5);
+        this.giftIcon.getComponent(cc.Sprite).spriteFrame = this.giftSFrame[0];
+        this.isTimer = true;
+    },
+    updateShape() {
+        this.drawIt = true;
+        this.deltaTime = 0;
+    },
+    drawShape(diff) {
+        var graphics = this.continueGraphics;
+        graphics.clear();
+        graphics.arc(0,0,180, 0 * Math.PI, diff * Math.PI, true);
+        graphics.lineTo(0,0);
+        graphics.fill();
+    },
+    updateDraw(dt) {
+        this.deltaTime += dt;
+        if(this.deltaTime > 6) {
+            this.drawIt = false;
+            this.restartGame();
+        }
+        this.drawShape(this.deltaTime / 3);
+    },
+    restartGame() {
+        this.isEnd = false;
+        this.gameOver.active = false;
+        this.drawIt = false;
+        this.init();
+        var plat = cc.instantiate(this.platformPrefab);
+        plat.setPosition(cc.v2(0, -320));
+        plat.parent = this.gameLayer;
+        this.firstPlat = plat;
+        var newBottle = cc.instantiate(this.bottlePrefab[this.curSkin]);
+        newBottle.setPosition(cc.v2(0, -312));
+        newBottle.parent = this.bottleLayer;
+        this.bottle = newBottle;
+        // console.log(this.bottle);
+        
+        // this.bottle.setPosition(cc.v2(0, -312));
+        // this.bottle.rotation = 0;
+        this.secondPlat.x = 0;
+    },
+    getData() {    
+        if(cc.sys.localStorage.getItem("bottleFlip_userData") != null && cc.sys.localStorage.getItem("bottleFlip_userData") != undefined) {
+            var userData = JSON.parse(cc.sys.localStorage.getItem("bottleFlip_userData"));
+            this.topScore = userData.top;
+            this.skins = userData.skins;
+            this.gemNum = userData.gems;
+            this.curSkin = userData.cur_skin;
+        }
+            
+    },
+
+    saveData() {
+        if(this.score > this.best_score) this.best_score = this.score;
+        var userData = {
+            top: this.topScore,
+            gems: this.gemNum,
+            skins: this.skins,
+            cur_skin: this.curSkin,
+        };
+        cc.sys.localStorage.setItem("bottleFlip_userData", JSON.stringify(userData));
+    },
+    continueGame() {
+        console.log(this.secondPlat.y);
+        this.isEnd = false;
+        this.isAction = false;
+        this.gameOver.active = false;
+        this.drawIt = false;
+        var plat = cc.instantiate(this.platformPrefab);
+        plat.setPosition(cc.v2(0, -320));
+        plat.parent = this.gameLayer;
+        this.firstPlat = plat;
+        this.bottle.setPosition(cc.v2(0, -312));
+        this.bottle.rotation = 0;
+        this.secondPlat.x = 0;
+    },
+    skinSet() {
+        if(this.curSkin != 0) {
+            this.bottle.destroy();
+            var newBottle = cc.instantiate(this.bottlePrefab[this.curSkin]);
+            newBottle.setPosition(cc.v2(0, -312));
+            newBottle.parent = this.bottleLayer;
+            this.bottle = newBottle;
+        }
+    }
 
 });
