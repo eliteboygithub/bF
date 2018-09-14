@@ -57,6 +57,24 @@ cc.Class({
         coinPrefab: cc.Prefab,
         gameOver: cc.Node,
         continueGraphics: cc.Graphics,
+        rankBtn: cc.Node,
+        ranking: cc.Node,
+        rankClose: cc.Node,
+        rankView: cc.Sprite,
+        
+        // Audio Clips
+        audiobg: {
+            default: null,
+            type: cc.AudioClip,
+        },
+        audiodie: {
+            default: null,
+            type: cc.AudioClip,
+        }, 
+        audiojump: {
+            default: null,
+            type: cc.AudioClip,
+        }
 
 
     },
@@ -75,18 +93,18 @@ cc.Class({
             } 
             
         });
-        self.node.on("touchstart", function(event) {
+        self.gameLayer.on("touchstart", function(event) {
             var touches = event.getTouches();
             self.firstLoc = touches[0].getLocation();
             if(self.menuOn) self.menu.active = false;
 
         });
-        self.node.on("touchend", function(event) {
-            console.log(self.isAction);
+        self.gameLayer.on("touchend", function(event) {
             var touches = event.getTouches();
             var offX = self.firstLoc.x - touches[0].getLocation().x;
             var offY = self.firstLoc.y - touches[0].getLocation().y;
             if(offY < -80 && self.isAction == false) {
+                self.jumpAudio();
                 var moveUp = cc.moveBy(0.6,0,540);
                 var jump = cc.jumpBy(0.7, cc.v2(0, 0), 180, 1);
                 self.bottle.runAction(cc.sequence(
@@ -128,6 +146,34 @@ cc.Class({
         });
         self.menuMusic.on("touchend", function() {
             self.toggleMusic();
+        });
+        self.menuShare.on("touchend", function() {
+            console.log ("click share button");
+            // actively pull up the sharing interface 
+            var canvas = cc.game.canvas;
+            var width  = cc.winSize.width;
+            // var height  = cc.winSize.height;
+            canvas.toTempFilePath({
+                x: 0,
+                y: 0,
+                width: width,
+                height: 500,
+                destWidth: 500,
+                destHeight: 500,
+                success (res) {
+                    //.可以保存该截屏图片
+                    console.log(res)
+                    wx.shareAppMessage({
+                        title: "Let's play Bottle Flip!",
+                        imageUrl: res.tempFilePath,
+                        success(res){ 
+                        }, 
+                        fail(res){                             
+                        }
+                    })
+                }
+            })
+
         });
         self.leftArrow.on("touchend", function() {
             if(self.skinNum == 1) {
@@ -179,7 +225,42 @@ cc.Class({
             ));
         });
         self.gameOver.children[4].on("touchend", function() {
-            self.continueGame();
+            console.log ("click share button");
+            // actively pull up the sharing interface 
+            var canvas = cc.game.canvas;
+            var width  = cc.winSize.width;
+            // var height  = cc.winSize.height;
+            canvas.toTempFilePath({
+                x: 0,
+                y: 0,
+                width: width,
+                height: 500,
+                destWidth: 500,
+                destHeight: 500,
+                success (res) {
+                    //.可以保存该截屏图片
+                    console.log(res)
+                    wx.shareAppMessage({
+                        title: "Let's play Bottle Flip!",
+                        imageUrl: res.tempFilePath,
+                        success(res){ 
+                            self.continueGame();
+                        }, 
+                        fail(res){ 
+                            
+                        }
+                    })
+                }
+            })
+            
+        });
+        self.rankBtn.on("touchend", function() {
+            self.ranking.active = true;
+            self.showRankState = true;
+        });
+        self.rankClose.on("touchend", function() {
+            self.ranking.active = false;
+            self.showRankState = false;
         });
     },
 
@@ -188,21 +269,31 @@ cc.Class({
         this.secondPlat = this.startSecond;
         this.skinNum = 0;
         this.curSkin = 0;
+        this.initStorage()
         this.init();
-        this.node.children[2].runAction(cc.repeatForever(cc.sequence(
-            cc.delayTime(5),
-            cc.fadeIn(7.0),
-            cc.fadeOut(7.0)                        
-        )));
+        // this.node.children[2].runAction(cc.repeatForever(cc.sequence(
+        //     cc.delayTime(5),
+        //     cc.fadeIn(7.0),
+        //     cc.fadeOut(7.0)                        
+        // )));
         this.skinSet();
-        
+        if (CC_WECHATGAME) {
+            window.wx.showShareMenu({withShareTicket: true});//设置分享按钮，方便获取群id展示群排行榜
+            this.tex = new cc.Texture2D();
+            window.sharedCanvas.width = 504;
+            window.sharedCanvas.height = 864;
+        };
+        this.backMusic = cc.audioEngine.play(this.audiobg, true);        
     },
-
+    jumpAudio() { 
+        if(this.musicOn) cc.audioEngine.play(this.audiojump, false);
+    },
     update (dt) {
         if(this.drawIt) this.updateDraw(dt);
+        if(this.showRankState) this._updateSubDomainCanvas();
         this.delta += dt;
         if(this.delta < 1) return;
-        this.runTimer();        
+        this.runTimer();
         this.delta = 0;
     },
     init() {
@@ -226,6 +317,7 @@ cc.Class({
         this.showScore();
         this.manMove = false;
         this.musicOn = true;
+        this.showRankState = false;
         
     },
     moveAll() {
@@ -397,11 +489,16 @@ cc.Class({
         this.showScore();
     },
     endGame() {
+        this.playAudio(this.audiodie);
         this.saveData();
         this.gameOver.active = true;
         this.gameOver.children[0].getComponent(cc.Label).string = this.score;
         this.gameOver.children[2].getComponent(cc.Sprite).spriteFrame = this.bottleSprite[this.skinNum];
         this.updateShape();
+        wx.postMessage({
+            msgType: 1,
+            score:this.topScore,
+        })
     },
     shopSkinPlay() {
         this.curSkin = this.skinNum;
@@ -415,9 +512,11 @@ cc.Class({
     },
     toggleMusic() {
         if(this.musicOn) {
+            cc.audioEngine.pause(this.backMusic);
             this.musicOn = false;
             this.menuMusic.children[1].active = true;
         } else {
+            cc.audioEngine.resume(this.backMusic);
             this.musicOn = true;
             this.menuMusic.children[1].active = false;
         }
@@ -527,15 +626,28 @@ cc.Class({
         // this.bottle.rotation = 0;
         this.secondPlat.x = 0;
     },
-    getData() {    
+    initStorage() {
+        var isD = cc.sys.localStorage.getItem("bottle_isData");
+        if(isD == null || isD == 0 || isD == undefined){
+            console.log("local data init");
+            var userData = {
+                top: 0,
+                gems: 0,
+                skins: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                cur_skin: 0,
+            };
+            cc.sys.localStorage.setItem("bottleFlip_userData", JSON.stringify(userData));
+            cc.sys.localStorage.setItem("bottle_isData", 1);
+        }
+    },
+    getData() {
         if(cc.sys.localStorage.getItem("bottleFlip_userData") != null && cc.sys.localStorage.getItem("bottleFlip_userData") != undefined) {
             var userData = JSON.parse(cc.sys.localStorage.getItem("bottleFlip_userData"));
             this.topScore = userData.top;
             this.skins = userData.skins;
             this.gemNum = userData.gems;
             this.curSkin = userData.cur_skin;
-        }
-            
+        } 
     },
 
     saveData() {
@@ -547,6 +659,7 @@ cc.Class({
             cur_skin: this.curSkin,
         };
         cc.sys.localStorage.setItem("bottleFlip_userData", JSON.stringify(userData));
+        cc.sys.localStorage.setItem("bottle_isData", 1);
     },
     continueGame() {
         console.log(this.secondPlat.y);
@@ -558,8 +671,11 @@ cc.Class({
         plat.setPosition(cc.v2(0, -320));
         plat.parent = this.gameLayer;
         this.firstPlat = plat;
-        this.bottle.setPosition(cc.v2(0, -312));
-        this.bottle.rotation = 0;
+        this.bottle.destroy();
+        var newBottle = cc.instantiate(this.bottlePrefab[this.curSkin]);
+        newBottle.setPosition(cc.v2(0, -312));
+        newBottle.parent = this.bottleLayer;
+        this.bottle = newBottle;
         this.secondPlat.x = 0;
     },
     skinSet() {
@@ -569,6 +685,20 @@ cc.Class({
             newBottle.setPosition(cc.v2(0, -312));
             newBottle.parent = this.bottleLayer;
             this.bottle = newBottle;
+        }
+    },
+    _updateSubDomainCanvas () {
+       
+        if (window.sharedCanvas != undefined) {
+            this.tex.initWithElement(window.sharedCanvas);
+            this.tex.handleLoadedTexture();
+            this.rankView.spriteFrame = new cc.SpriteFrame(this.tex);
+        }
+    },
+
+    playAudio(audio) {
+        if(this.musicOn) {
+            cc.audioEngine.playEffect(audio, false);
         }
     }
 

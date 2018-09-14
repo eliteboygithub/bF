@@ -19,22 +19,23 @@
     "portrait": false,
     "upsideDown": false
   },
-  "packageName": "org.cocos2d.bottleFlip2",
+  "packageName": "org.cocos2d.subgame",
   "privateKey": "",
   "qqplay": {
     "REMOTE_SERVER_ROOT": "",
     "orientation": "portrait"
   },
-  "startScene": "05891b1f-f7c6-4304-a0dc-3a852c0cd746",
-  "title": "bottleFlip2",
+  "renderMode": "1",
+  "startScene": "56c6bd96-ba03-4b34-b676-55f727d0b248",
+  "title": "subgame",
   "webOrientation": "auto",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "",
     "appid": "wx6ac3f5090a6b99c5",
-    "isSubdomain": false,
+    "isSubdomain": true,
     "orientation": "portrait",
-    "subContext": "subgame"
+    "subContext": ""
   },
-  "xxteaKey": "000eb93d-8d23-43",
+  "xxteaKey": "a1cb082b-cb37-4b",
   "zipCompressJs": true
 }
