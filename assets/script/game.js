@@ -32,7 +32,7 @@ cc.Class({
         bestLabel: cc.Label,
         gemPrefab: cc.Prefab,
         bonusPrefab: cc.Prefab,
-        manSheet: cc.Node,
+        manPrefab: cc.Prefab,
         bottlePrefab: {
             default: [],
             type: cc.Prefab,
@@ -74,7 +74,12 @@ cc.Class({
         audiojump: {
             default: null,
             type: cc.AudioClip,
-        }
+        },
+        endMenu: cc.Node,
+        endRank: cc.Node,
+        endShop: cc.Node,
+        endRestart: cc.Node,
+
 
 
     },
@@ -119,13 +124,6 @@ cc.Class({
                 self.bottle.runAction(cc.moveBy(0.3, offX * -2, 0));
                 self.bottle.getComponent(cc.Animation).play();
                 self.firstPlat.getComponent(cc.Animation).play("fade_down");
-                if(self.manMove) {
-                    self.manSheet.runAction(cc.sequence(
-                        cc.moveBy(0.3, 450, 0),
-                        cc.callFunc(function() { self.manSheet.setPosition(cc.v2(-460, 150))})
-                    ));
-                    self.manMove = false;
-                }
                 if(!self.startGame) self.guide.active = false;
             }
             
@@ -172,7 +170,7 @@ cc.Class({
                         }
                     })
                 }
-            })
+            });
 
         });
         self.leftArrow.on("touchend", function() {
@@ -185,7 +183,6 @@ cc.Class({
             }
             self.skinNum -= 1;
             self.showShopData();
-            
         });
         self.rightArrow.on("touchend", function() {
             if(self.skinNum == 28) {
@@ -234,7 +231,7 @@ cc.Class({
                 x: 0,
                 y: 0,
                 width: width,
-                height: 500,
+                height: width,
                 destWidth: 500,
                 destHeight: 500,
                 success (res) {
@@ -262,13 +259,29 @@ cc.Class({
             self.ranking.active = false;
             self.showRankState = false;
         });
+        self.endRank.on("touchend", function() {
+            self.ranking.active = true;
+            self.showRankState = true;
+        });
+        self.endShop.on("touchend", function() {
+            self.shop.active = true;
+            self.skinNum = self.curSkin;
+            self.showShopData();
+            if(self.skinNum == 0) {
+                self.leftArrow.active = false;
+                self.shop.children[2].active = true;
+            }
+        });
+        self.endRestart.on("touchend", function() {
+            self.endMenu.active = false;
+            self.restartGame();
+        });
     },
 
     start () {
         this.firstPlat = this.startFirst;
         this.secondPlat = this.startSecond;
         this.skinNum = 0;
-        this.curSkin = 0;
         this.initStorage()
         this.init();
         // this.node.children[2].runAction(cc.repeatForever(cc.sequence(
@@ -315,9 +328,9 @@ cc.Class({
         this.isTimer = true;
         this.getData();
         this.showScore();
-        this.manMove = false;
         this.musicOn = true;
         this.showRankState = false;
+        this.revives = 0;
         
     },
     moveAll() {
@@ -329,10 +342,14 @@ cc.Class({
             cc.callFunc(this.afterMove, this)
         ));  
         if(this.comboNum > 1) {
-            this.manMove = true;
-            this.manSheet.runAction(cc.sequence(
+            var manSheet = cc.instantiate(this.manPrefab);
+            manSheet.parent = this.gameLayer;
+            manSheet.runAction(cc.sequence(
                 cc.delayTime(0.3),
-                cc.moveBy(0.3, 460 , -150).easing(cc.easeInOut(2.0))
+                cc.moveBy(0.3, 460 , -150).easing(cc.easeInOut(2.0)),
+                cc.delayTime(2),
+                cc.moveBy(0.3, 480, 0),
+                cc.removeSelf(true)
             ));
         }
     },
@@ -412,7 +429,7 @@ cc.Class({
                     ));
                 }
             }else{
-                if(Math.abs(diffX) < 30) this.combo();
+                if(Math.abs(diffX) < 15) this.combo();
                 else this.success();
             }
         }
@@ -490,18 +507,32 @@ cc.Class({
     },
     endGame() {
         this.playAudio(this.audiodie);
+        this.bottle.destroy();
         this.saveData();
+        if(this.revives > 2) {
+            this.endMenu.active = true;
+            this.endMenu.children[0].getComponent(cc.Label).string = this.score;
+            return;
+        }
         this.gameOver.active = true;
         this.gameOver.children[0].getComponent(cc.Label).string = this.score;
         this.gameOver.children[2].getComponent(cc.Sprite).spriteFrame = this.bottleSprite[this.skinNum];
+        
         this.updateShape();
         wx.postMessage({
             msgType: 1,
             score:this.topScore,
-        })
+        });
     },
     shopSkinPlay() {
+        if(this.isEnd) {
+            this.shop.active = false;
+            this.curSkin = this.skinNum;
+            console.log("current skin changed: " + this.curSkin);
+            return;
+        }        
         this.curSkin = this.skinNum;
+        
         var orgPos = this.bottle.getPosition();
         this.bottle.destroy();
         var newBottle = cc.instantiate(this.bottlePrefab[this.skinNum]);
@@ -522,7 +553,6 @@ cc.Class({
         }
     },
     checkShopState() {
-        console.log(this.shopChecked);
         if(this.shopChecked) return;
         var lowestPrice = 0;
         for( var i = 0; i < 30; i++) {
@@ -603,15 +633,19 @@ cc.Class({
         this.deltaTime += dt;
         if(this.deltaTime > 6) {
             this.drawIt = false;
-            this.restartGame();
+            this.gameOver.active = false;
+            this.endMenu.active = true;
+            this.endMenu.children[0].getComponent(cc.Label).string = this.score;
         }
         this.drawShape(this.deltaTime / 3);
     },
     restartGame() {
+        this.revives = 0;
+        this.score = 0;
         this.isEnd = false;
+        this.isAction = false;
         this.gameOver.active = false;
         this.drawIt = false;
-        this.init();
         var plat = cc.instantiate(this.platformPrefab);
         plat.setPosition(cc.v2(0, -320));
         plat.parent = this.gameLayer;
@@ -620,11 +654,11 @@ cc.Class({
         newBottle.setPosition(cc.v2(0, -312));
         newBottle.parent = this.bottleLayer;
         this.bottle = newBottle;
-        // console.log(this.bottle);
-        
-        // this.bottle.setPosition(cc.v2(0, -312));
-        // this.bottle.rotation = 0;
         this.secondPlat.x = 0;
+        this.scoreLabel.string = this.score;
+        this.dueTime = new Date().getTime() + (1000 * 60 * 5);
+        this.isTimer = true;
+        this.showRankState = false;
     },
     initStorage() {
         var isD = cc.sys.localStorage.getItem("bottle_isData");
@@ -647,7 +681,7 @@ cc.Class({
             this.skins = userData.skins;
             this.gemNum = userData.gems;
             this.curSkin = userData.cur_skin;
-        } 
+        }
     },
 
     saveData() {
@@ -662,7 +696,7 @@ cc.Class({
         cc.sys.localStorage.setItem("bottle_isData", 1);
     },
     continueGame() {
-        console.log(this.secondPlat.y);
+        this.revives += 1;
         this.isEnd = false;
         this.isAction = false;
         this.gameOver.active = false;
@@ -677,6 +711,7 @@ cc.Class({
         newBottle.parent = this.bottleLayer;
         this.bottle = newBottle;
         this.secondPlat.x = 0;
+
     },
     skinSet() {
         if(this.curSkin != 0) {

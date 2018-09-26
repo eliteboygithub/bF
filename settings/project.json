@@ -11,8 +11,8 @@
       true
     ]
   ],
-  "design-resolution-height": 640,
-  "design-resolution-width": 960,
+  "design-resolution-height": 1280,
+  "design-resolution-width": 720,
   "excluded-modules": [
     "LabelOutline",
     "Spine Skeleton",
@@ -40,5 +40,6 @@
     "width": 960
   },
   "use-customize-simulator": false,
-  "use-project-simulator-setting": false
+  "use-project-simulator-setting": false,
+  "start-scene": "current"
 }
